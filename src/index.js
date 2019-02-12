@@ -10,9 +10,7 @@ if (navigator.serviceWorker != null) {
 }
 
 const body = document.getElementsByTagName('body')[0];
-const app = document.createElement('div');
-app.setAttribute('id', 'app');
-body.insertBefore(app, body.firstChild);
+body.setAttribute('id', 'app');
 new Vue({
     el: '#app',
     render: h => h(App),
