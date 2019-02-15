@@ -37,7 +37,7 @@ export default {
     }),
     methods: {
         keyDown(key) {
-            let task = this.tasks.find(x => x.hotkey == key.toUpperCase());
+            let task = key == ' ' ? { id: 0, name: 'None' } : this.tasks.find(x => x.hotkey == key.toUpperCase());
             if (task != null && task.id != this.currentTask.id) {
                 if (this.currentTimeEntry != null) {
                     this.currentTimeEntry.end = Date.now();
