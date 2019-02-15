@@ -19,7 +19,7 @@
             </aside>
         </div>
         <div class="column is-9">
-            <the-tracker v-if="mode == 'track'"></the-tracker>
+            <the-tracker v-show="mode == 'track'" v-bind:current-time="currentTime" v-bind:key-command="trackerKeyCommand"></the-tracker>
             <the-tasks v-if="mode == 'tasks'"></the-tasks>
             <the-history v-if="mode == 'history'"></the-history>
         </div>
@@ -39,7 +39,23 @@ import TheHistory from './TheHistory.vue';
 export default {
     data: () => ({
         mode: 'track',
+
+        trackerKeyCommand: null,
+        currentTime: null,
+        documentKeyDownHandler: null,
+        timeUpdateInterval: null,
     }),
+    async created() {
+        this.documentKeyDownHandler = event => {
+            if (this.mode == 'track') this.trackerKeyCommand = event.key;
+        };
+        document.addEventListener('keydown', this.documentKeyDownHandler);
+        this.timeUpdateInterval = window.setInterval(() => this.currentTimestamp = Date.now(), 1000 * 60);
+    },
+    destroyed() {
+        document.removeEventListener('keydown', this.documentKeyDownHandler);
+        if (this.timeUpdateInterval != null) window.clearInterval(this.timeUpdateInterval);
+    },
     components: {
         'the-navbar': TheNavbar,
         'the-tasks': TheTasks,

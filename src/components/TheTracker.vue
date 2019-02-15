@@ -35,22 +35,11 @@ export default {
         timeUpdateInterval: null,
         documentKeyDownHandler: null,
     }),
+    props: {
+        keyCommand: String,
+        currentTime: Number,
+    },
     methods: {
-        keyDown(key) {
-            let task = key == ' ' ? { id: 0, name: 'None' } : this.tasks.find(x => x.hotkey == key.toUpperCase());
-            if (task != null && task.id != this.currentTask.id) {
-                if (this.currentTimeEntry != null) {
-                    this.currentTimeEntry.end = Date.now();
-                    if (this.currentTimeEntry.end - this.currentTimeEntry.start > 1000*60) {
-                        // Only store time entries over a minute
-                        db.timeEntries.add(this.currentTimeEntry);
-                    }
-                }
-                this.currentTask = task;
-                this.currentTimestamp = Date.now();
-                this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
-            }
-        },
         toggleTracking() {
             if (!this.tracking) {
                 this.currentTask = { id: 0, name: 'None' };
@@ -74,16 +63,24 @@ export default {
             return this.currentTimestamp - this.currentTimeEntry.start;
         },
     },
+    watch: {
+        keyCommand(key) {
+            let task = key == ' ' ? { id: 0, name: 'None' } : this.tasks.find(x => x.hotkey == key.toUpperCase());
+            if (this.tracking && task != null && task.id != this.currentTask.id) {
+                if (this.currentTimeEntry != null) {
+                    this.currentTimeEntry.end = Date.now();
+                    if (this.currentTimeEntry.end - this.currentTimeEntry.start > 1000*60) {
+                        // Only store time entries over a minute
+                        db.timeEntries.add(this.currentTimeEntry);
+                    }
+                }
+                this.currentTask = task;
+                this.currentTimestamp = Date.now();
+                this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
+            }
+        },
+    },
     async created() {
-        this.documentKeyDownHandler = event => this.keyDown(event.key);
-        document.addEventListener('keydown', this.documentKeyDownHandler);
-        this.timeUpdateInterval = window.setInterval(() => this.currentTimestamp = Date.now(), 1000 * 60);
-    },
-    destroyed() {
-        document.removeEventListener('keydown', this.documentKeyDownHandler);
-        if (this.timeUpdateInterval != null) window.clearInterval(this.timeUpdateInterval);
-    },
-    async mounted() {
         this.tasks = await db.tasks.toArray();
     },
 }
