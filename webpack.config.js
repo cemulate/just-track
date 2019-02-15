@@ -49,7 +49,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({ filename: 'styles.css' }),
     new HtmlWebpackPlugin({
-      meta: { viewport: 'width=device-width, initial-scale=1' },
+      meta: { viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' },
       title: 'App',
     }),
     new CopyWebpackPlugin([

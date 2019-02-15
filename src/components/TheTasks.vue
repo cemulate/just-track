@@ -33,24 +33,6 @@
         </div>
     </nav>
 </div>
-<!-- <div class="columns is-multiline">
-    <div class="column is-4" v-for="task in tasks">
-        <div class="card">
-            <header class="card-header">
-                <p class="card-header-title">{{ task.name }}</p>
-                <a class="card-header-icon" v-on:click="deleteTask(task.id)">
-                    <span class="icon">
-                        <font-awesome-icon icon="trash-alt"></font-awesome-icon>
-                    </span>
-                </a>
-            </header>
-            <div class="card-content">
-                <div class="content">
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
 <div class="field has-addons" style="width: 100%"> <!-- Hack? -->
     <div class="control has-icons-left is-expanded">
         <span class="icon is-left"><font-awesome-icon icon="plus"></font-awesome-icon></span>
@@ -87,7 +69,6 @@ export default {
         },
         async deleteTaskById(id) {
             await db.tasks.delete(id);
-            console.log(db.tasks);
             this.tasks = await db.tasks.toArray();
         },
         async setTaskColor(task, color) {

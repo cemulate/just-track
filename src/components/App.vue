@@ -12,12 +12,16 @@
                     <li><a v-bind:class="{ 'is-active': mode == 'tasks' }" v-on:click="mode = 'tasks'">
                         <font-awesome-icon icon="tasks"></font-awesome-icon>&nbsp; Tasks
                     </a></li>
+                    <li><a v-bind:class="{ 'is-active': mode == 'history' }" v-on:click="mode = 'history'">
+                        <font-awesome-icon icon="history"></font-awesome-icon>&nbsp; History
+                    </a></li>
                 </ul>
             </aside>
         </div>
         <div class="column is-9">
             <the-tracker v-if="mode == 'track'"></the-tracker>
             <the-tasks v-if="mode == 'tasks'"></the-tasks>
+            <the-history v-if="mode == 'history'"></the-history>
         </div>
     </div>
 </section>
@@ -30,6 +34,7 @@ import db from '../lib/idb.js';
 import TheNavbar from './TheNavbar.vue';
 import TheTasks from './TheTasks.vue';
 import TheTracker from './TheTracker.vue';
+import TheHistory from './TheHistory.vue';
 
 export default {
     data: () => ({
@@ -39,6 +44,7 @@ export default {
         'the-navbar': TheNavbar,
         'the-tasks': TheTasks,
         'the-tracker': TheTracker,
+        'the-history': TheHistory,
     },
 };
 </script>
