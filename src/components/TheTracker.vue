@@ -30,20 +30,20 @@ export default {
         tracking: false,
         currentTask: { id: 0, name: 'None' },
         currentTimeEntry: null,
-        currentTimestamp: null,
+        myCurrentTimestamp: null,
 
         timeUpdateInterval: null,
         documentKeyDownHandler: null,
     }),
     props: {
         keyCommand: String,
-        currentTime: Number,
+        currentTimestamp: Number,
     },
     methods: {
         toggleTracking() {
             if (!this.tracking) {
                 this.currentTask = { id: 0, name: 'None' };
-                this.currentTimestamp = Date.now();
+                this.myCurrentTimestamp = Date.now();
                 this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
                 this.tracking = true;
             } else if (this.tracking && this.currentTimeEntry) {
@@ -60,7 +60,7 @@ export default {
     },
     computed: {
         elapsedTime() {
-            return this.currentTimestamp - this.currentTimeEntry.start;
+            return this.myCurrentTimestamp - this.currentTimeEntry.start;
         },
     },
     watch: {
@@ -75,9 +75,13 @@ export default {
                     }
                 }
                 this.currentTask = task;
-                this.currentTimestamp = Date.now();
+                this.myCurrentTimestamp = Date.now();
                 this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
             }
+        },
+        currentTimestamp(timestamp) {
+            console.log(this.currentTimeEntry, timestamp);
+            this.myCurrentTimestamp = timestamp;
         },
     },
     async created() {

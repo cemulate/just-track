@@ -19,7 +19,7 @@
             </aside>
         </div>
         <div class="column is-9">
-            <the-tracker v-show="mode == 'track'" v-bind:current-time="currentTime" v-bind:key-command="trackerKeyCommand"></the-tracker>
+            <the-tracker v-show="mode == 'track'" v-bind:current-timestamp="currentTimestamp" v-bind:key-command="trackerKeyCommand"></the-tracker>
             <the-tasks v-if="mode == 'tasks'"></the-tasks>
             <the-history v-if="mode == 'history'"></the-history>
         </div>
@@ -41,7 +41,7 @@ export default {
         mode: 'track',
 
         trackerKeyCommand: null,
-        currentTime: null,
+        currentTimestamp: null,
         documentKeyDownHandler: null,
         timeUpdateInterval: null,
     }),
