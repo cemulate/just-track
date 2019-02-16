@@ -19,7 +19,7 @@
             </div>
             <div class="level-right">
                 <div class="level-item">
-                    <span class="is-size-3 has-right-margin">{{ total.time | elapsedTime }}</span>
+                    <span class="is-size-3 has-right-margin">{{ total.time | timePeriod }}</span>
                 </div>
                 <div class="level-item">
                     <span class="is-size-3">{{ total.fraction | percent }}</span>

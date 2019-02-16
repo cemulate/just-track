@@ -2,7 +2,7 @@ import './styles/theme.scss';
 import Vue from 'vue';
 import App from './components/App.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { elapsedTime, percent } from './util/filters.js';
+import { timePeriod, percent } from './util/filters.js';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faExternalLinkAlt, faTasks, faPlus, faTrashAlt, faKeyboard, faHistory } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +11,7 @@ library.add(faExternalLinkAlt, faTasks, faPlus, faTrashAlt, faKeyboard, faHistor
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-Vue.filter('elapsedTime', elapsedTime);
+Vue.filter('timePeriod', timePeriod);
 Vue.filter('percent', percent);
 
 if (navigator.serviceWorker != null) {

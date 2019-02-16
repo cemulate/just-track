@@ -12,7 +12,7 @@
             <div class="columns is-centered" v-if="tracking">
                 <div class="column is-narrow">
                     <span class="soft">
-                        {{ elapsedTime | elapsedTime(true) }}
+                        {{ elapsedTime | timePeriod(true) }}
                     </span>
                 </div>
             </div>
