@@ -1,5 +1,6 @@
 <template>
-<div id="root">
+<div>
+<div id="desktop-ui">
 <div class="box" v-for="task in tasks">
     <nav class="level">
         <div class="level-left">
@@ -32,6 +33,10 @@
             </div>
         </div>
     </nav>
+</div>
+</div>
+<div id="mobile-ui">
+    
 </div>
 <div class="field has-addons" style="width: 100%"> <!-- Hack? -->
     <div class="control has-icons-left is-expanded">
@@ -85,5 +90,16 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import 'bulma/sass/utilities/mixins.sass';
+#desktop-ui {
+    @include until($tablet) {
+        display: none;
+    }
+}
+#mobile-ui {
+    @include from($tablet) {
+        display: none;
+    }
+}
 </style>

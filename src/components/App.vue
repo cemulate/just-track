@@ -1,14 +1,12 @@
 <template>
-<body id="root">
+<body v-on:keydown="keyDown">
 <the-navbar></the-navbar>
-<section class="section">
+<div class="container">
+    <the-tracker v-bind:current-timestamp="currentTimestamp" v-bind:key-command="trackerKeyCommand"></the-tracker>
     <div class="columns">
-        <div class="column is-3">
+        <div class="column is-2">
             <aside class="menu">
                 <ul class="menu-list">
-                    <li><a v-bind:class="{ 'is-active': mode == 'track' }" v-on:click="mode = 'track'">
-                        <font-awesome-icon v-bind:icon="['far', 'clock']"></font-awesome-icon>&nbsp; Track
-                    </a></li>
                     <li><a v-bind:class="{ 'is-active': mode == 'tasks' }" v-on:click="mode = 'tasks'">
                         <font-awesome-icon icon="tasks"></font-awesome-icon>&nbsp; Tasks
                     </a></li>
@@ -18,13 +16,12 @@
                 </ul>
             </aside>
         </div>
-        <div class="column is-9">
-            <the-tracker v-show="mode == 'track'" v-bind:current-timestamp="currentTimestamp" v-bind:key-command="trackerKeyCommand"></the-tracker>
+        <div class="column is-10">
             <the-tasks v-if="mode == 'tasks'"></the-tasks>
             <the-history v-if="mode == 'history'"></the-history>
         </div>
     </div>
-</section>
+</div>
 </body>
 </template>
 
@@ -38,22 +35,22 @@ import TheHistory from './TheHistory.vue';
 
 export default {
     data: () => ({
-        mode: 'track',
+        mode: 'tasks',
 
         trackerKeyCommand: null,
         currentTimestamp: null,
-        documentKeyDownHandler: null,
+        keyDownHandler: null,
         timeUpdateInterval: null,
     }),
+    methods: {
+        keyDown(event) {
+            if (event.target.tagName == 'BODY') this.trackerKeyCommand = event.key;
+        }
+    },
     async created() {
-        this.documentKeyDownHandler = event => {
-            if (this.mode == 'track') this.trackerKeyCommand = event.key;
-        };
-        document.addEventListener('keydown', this.documentKeyDownHandler);
         this.timeUpdateInterval = window.setInterval(() => this.currentTimestamp = Date.now(), 1000 * 60);
     },
     destroyed() {
-        document.removeEventListener('keydown', this.documentKeyDownHandler);
         if (this.timeUpdateInterval != null) window.clearInterval(this.timeUpdateInterval);
     },
     components: {

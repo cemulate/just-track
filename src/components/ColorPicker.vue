@@ -3,9 +3,8 @@
 <template v-if="expanded">
     <a class="button"
        v-for="c in colorChoices"
-       v-bind:style="{ 'background-color': c }"
-       v-bind:disabled="c == color"
-       v-on:click="$emit('pick-color', c)">
+       v-bind:style="{ 'background-color': c, 'border': color == c ? '1px solid black' : '' }"
+       v-on:click="chooseColor(c)">
         &nbsp;&nbsp;&nbsp;
     </a>
 </template>
@@ -15,7 +14,16 @@
 </template>
 
 <script>
-const colorChoices = new Array(10).fill().map((_, i) => `hsl(${ i * 36 }, 40%, 50%)`);
+// const colorChoices = new Array(5).fill().map((_, i) => `hsl(${ i * 60 }, 100%, 50%)`);
+const colorChoices = [
+    '#FF4136',
+    '#39CCCC',
+    '#9BC53D',
+    '#FFE066',
+    '#45CB85',
+    '#CBD2D0',
+    '#F2ED6F',
+];
 
 export default {
     data: () => ({
@@ -24,6 +32,12 @@ export default {
     }),
     props: {
         color: String,
+    },
+    methods: {
+        chooseColor(color) {
+            this.expanded = false;
+            this.$emit('pick-color', color);
+        }
     },
 }
 </script>

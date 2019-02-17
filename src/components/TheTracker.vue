@@ -1,21 +1,13 @@
 <template>
 <div id="main-area" class="box" v-on:click="toggleTracking" v-bind:style="{ 'background-color': currentTask.color }">
-    <div class="columns is-vcentered is-centered">
+    <div class="columns is-centered">
         <div class="column is-narrow">
-            <div class="columns is-centered">
-                <div class="column is-narrow">
-                    <span v-bind:class="{ 'soft': !tracking }">
-                        {{ tracking ? this.currentTask.name : 'START' }}
-                    </span>
-                </div>
-            </div>
-            <div class="columns is-centered" v-if="tracking">
-                <div class="column is-narrow">
-                    <span class="soft">
-                        {{ elapsedTime | timePeriod(true) }}
-                    </span>
-                </div>
-            </div>
+            <span v-bind:class="{ 'soft': !tracking }">
+                {{ tracking ? currentTask.name : 'START' }}
+            </span>
+            <span class="soft" v-if="tracking">
+                {{ elapsedTime | timePeriod }}
+            </span>
         </div>
     </div>
 </div>
@@ -26,7 +18,6 @@ import db from '../lib/idb.js';
 
 export default {
     data: () => ({
-        tasks: [],
         tracking: false,
         currentTask: { id: 0, name: 'None' },
         currentTimeEntry: null,
@@ -64,8 +55,8 @@ export default {
         },
     },
     watch: {
-        keyCommand(key) {
-            let task = key == ' ' ? { id: 0, name: 'None' } : this.tasks.find(x => x.hotkey == key.toUpperCase());
+        async keyCommand(key) {
+            let task = await (key == ' ' ? { id: 0, name: 'None' } : db.tasks.where('hotkey').equals(key.toUpperCase()).first());
             if (this.tracking && task != null && task.id != this.currentTask.id) {
                 if (this.currentTimeEntry != null) {
                     this.currentTimeEntry.end = Date.now();
@@ -80,32 +71,23 @@ export default {
             }
         },
         currentTimestamp(timestamp) {
-            console.log(this.currentTimeEntry, timestamp);
             this.myCurrentTimestamp = timestamp;
         },
-    },
-    async created() {
-        this.tasks = await db.tasks.toArray();
     },
 }
 </script>
 
 <style lang="scss">
-@import 'bulma/sass/utilities/mixins.sass';
-#root {
-    #main-area {
-        div.columns {
-            height: 100%;
-            span {
-                font-size: 6vw;
-                font-weight: bold;
-                &.soft {
-                    opacity: 0.5;
-                }
-            }
+#main-area {
+    margin-top: 20px;
+    span {
+        font-size: 6vw;
+        font-weight: bold;
+        &.soft {
+            opacity: 0.5;
         }
-        @include from($tablet) {
-            height: calc(100vh - 148px);
+        &:first-child {
+            margin-right: 10px;
         }
     }
 }

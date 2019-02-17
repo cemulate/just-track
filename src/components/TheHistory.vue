@@ -7,7 +7,7 @@
     </div>
     <div class="column is-4">
         <div class="time-entry" v-for="entry in timeEntries" v-bind:style="{ 'height': calculateEntryHeight(entry), 'background-color': entry.task.color }">
-            <p><strong>{{ entry.task.name }}</strong></p>
+            <p><strong v-bind:style="{ 'color': entry.taskId == 0 ? 'white' : 'inherit' }">{{ entry.task.name }}</strong></p>
         </div>
     </div>
     <div class="column is-5">
@@ -43,17 +43,17 @@ export default {
         let [ start, end ] = [ startOfToday(), endOfToday() ].map(getTime);
         let timeEntries = await db.timeEntries.where('start').between(start, end).toArray();
         await Promise.all(timeEntries.map(async (entry) => {
-            entry.task = await db.tasks.where('id').equals(entry.taskId).first();
+            entry.task = entry.taskId == 0 ? { id: 0, name: 'None', color: 'black' } : await db.tasks.where('id').equals(entry.taskId).first();
         }));
         this.timeEntries = timeEntries;
-        let task = await db.tasks.where('id').equals(57).first();
-        let nullTask = { id: 0, name: 'None', color: 'gray' };
-        this.timeEntries = [
-            { taskId: 0, start: start + 1000*60*60*8 + 1000*60*30, end: start + 1000*60*60*11 + 1000*60*0, task: nullTask },
-            { taskId: 57, start: start + 1000*60*60*11 + 1000*60*0, end: start + 1000*60*60*14 + 1000*60*15, task },
-            { taskId: 0, start: start + 1000*60*60*14 + 1000*60*15, end: start + 1000*60*60*15 + 1000*60*0, task: nullTask },
-            { taskId: 57, start: start + 1000*60*60*15 + 1000*60*0, end: start + 1000*60*60*16 + 1000*60*0, task },
-        ];
+        // let task = await db.tasks.where('id').equals(57).first();
+        // let nullTask = { id: 0, name: 'None', color: 'gray' };
+        // this.timeEntries = [
+        //     { taskId: 0, start: start + 1000*60*60*8 + 1000*60*30, end: start + 1000*60*60*11 + 1000*60*0, task: nullTask },
+        //     { taskId: 57, start: start + 1000*60*60*11 + 1000*60*0, end: start + 1000*60*60*14 + 1000*60*15, task },
+        //     { taskId: 0, start: start + 1000*60*60*14 + 1000*60*15, end: start + 1000*60*60*15 + 1000*60*0, task: nullTask },
+        //     { taskId: 57, start: start + 1000*60*60*15 + 1000*60*0, end: start + 1000*60*60*16 + 1000*60*0, task },
+        // ];
     },
     methods: {
         calculateEntryHeight(entry) {
