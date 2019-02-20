@@ -6,6 +6,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
   devServer: {
@@ -72,5 +73,6 @@ module.exports = {
         },
       ],
     }),
+    // new BundleAnalyzerPlugin({ analyzerPort: 8889 }),
   ]
 };
