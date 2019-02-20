@@ -1,10 +1,10 @@
 <template>
 <body v-on:keydown="keyDown">
 <the-navbar></the-navbar>
-<div class="container">
+<div class="container is-fluid">
     <the-tracker v-bind:current-timestamp="currentTimestamp" v-bind:key-command="trackerKeyCommand"></the-tracker>
-    <div class="columns">
-        <div class="column is-2">
+    <div class="columns is-desktop">
+        <!-- <div class="column is-2">
             <aside class="menu">
                 <ul class="menu-list">
                     <li><a v-bind:class="{ 'is-active': mode == 'tasks' }" v-on:click="mode = 'tasks'">
@@ -19,6 +19,12 @@
         <div class="column is-10">
             <the-tasks v-if="mode == 'tasks'"></the-tasks>
             <the-history v-if="mode == 'history'"></the-history>
+        </div> -->
+        <div class="column is-6-widescreen is-7-desktop is-12-tablet">
+            <the-tasks></the-tasks>
+        </div>
+        <div class="column is-6-widescreen is-5-desktop is-12-tablet">
+            <the-history></the-history>
         </div>
     </div>
 </div>
@@ -44,8 +50,11 @@ export default {
     }),
     methods: {
         keyDown(event) {
-            if (event.target.tagName == 'BODY') this.trackerKeyCommand = event.key;
-        }
+            if (event.target.tagName == 'BODY') {
+                if (event.key == ' ') event.preventDefault();
+                this.trackerKeyCommand = event.key;
+            }
+        },
     },
     async created() {
         this.timeUpdateInterval = window.setInterval(() => this.currentTimestamp = Date.now(), 1000 * 60);

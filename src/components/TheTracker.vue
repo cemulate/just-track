@@ -1,5 +1,5 @@
 <template>
-<div id="main-area" class="box" v-on:click="toggleTracking" v-bind:style="{ 'background-color': currentTask.color }">
+<div id="main-area" class="box" v-on:click="toggleTracking" v-bind:style="{ 'background': tracking ? currentTask.color : 'inherit' }">
     <div class="columns is-centered">
         <div class="column is-narrow">
             <span v-bind:class="{ 'soft': !tracking }">
@@ -15,11 +15,13 @@
 
 <script>
 import db from '../lib/idb.js';
+import { NONE_TASK } from '../lib/constants';
+import { eventBus } from '../lib/event-bus';
 
 export default {
     data: () => ({
         tracking: false,
-        currentTask: { id: 0, name: 'None' },
+        currentTask: NONE_TASK,
         currentTimeEntry: null,
         myCurrentTimestamp: null,
 
@@ -30,23 +32,46 @@ export default {
         keyCommand: String,
         currentTimestamp: Number,
     },
+    async mounted() {
+        eventBus.$on('tracking-request', task => {
+            this.endTracking();
+            this.startTracking(task);
+        });
+        eventBus.$on('task-updated', task => {
+            if (task.id == this.currentTask.id) this.currentTask = task;
+        });
+        let resumableEntry = localStorage.getItem('currentTimeEntry');
+        if (resumableEntry != null) {
+            this.currentTimeEntry = JSON.parse(resumableEntry);
+            this.currentTask = await (this.currentTimeEntry.taskId == 0 ? NONE_TASK : db.tasks.where('id').equals(this.currentTimeEntry.taskId).first());
+            this.myCurrentTimestamp = Date.now() + 100;
+            this.tracking = true;
+        }
+    },
     methods: {
         toggleTracking() {
             if (!this.tracking) {
-                this.currentTask = { id: 0, name: 'None' };
-                this.myCurrentTimestamp = Date.now();
-                this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
-                this.tracking = true;
+                this.startTracking(NONE_TASK);
             } else if (this.tracking && this.currentTimeEntry) {
-                this.currentTimeEntry.end = Date.now();
-                if (this.currentTimeEntry.end - this.currentTimeEntry.start > 1000*60) {
-                    // Only store time entries over a minute
-                    db.timeEntries.add(this.currentTimeEntry);
-                }
-                this.tracking = false;
-                this.currentTask = { id: 0, name: 'None' };
-                this.currentTimeEntry = null;
+                this.endTracking();
             }
+        },
+        startTracking(task) {
+            this.currentTask = task;
+            this.myCurrentTimestamp = Date.now() + 100;
+            this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
+            this.tracking = true;
+        },
+        endTracking() {
+            if (this.currentTimeEntry == null) return;
+            this.currentTimeEntry.end = Date.now();
+            if (this.currentTimeEntry.end - this.currentTimeEntry.start > 1000*60) {
+                // Only store time entries over a minute
+                db.timeEntries.add(this.currentTimeEntry);
+            }
+            this.tracking = false;
+            this.currentTask = NONE_TASK;
+            this.currentTimeEntry = null;
         },
     },
     computed: {
@@ -56,22 +81,19 @@ export default {
     },
     watch: {
         async keyCommand(key) {
-            let task = await (key == ' ' ? { id: 0, name: 'None' } : db.tasks.where('hotkey').equals(key.toUpperCase()).first());
+            let task = await (key == ' ' ? NONE_TASK : db.tasks.where('hotkey').equals(key.toUpperCase()).first());
             if (this.tracking && task != null && task.id != this.currentTask.id) {
-                if (this.currentTimeEntry != null) {
-                    this.currentTimeEntry.end = Date.now();
-                    if (this.currentTimeEntry.end - this.currentTimeEntry.start > 1000*60) {
-                        // Only store time entries over a minute
-                        db.timeEntries.add(this.currentTimeEntry);
-                    }
-                }
-                this.currentTask = task;
-                this.myCurrentTimestamp = Date.now();
-                this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
+                this.endTracking();
+                this.startTracking(task);
             }
         },
         currentTimestamp(timestamp) {
             this.myCurrentTimestamp = timestamp;
+        },
+        currentTimeEntry(newEntry) {
+            if (newEntry == null) localStorage.removeItem('currentTimeEntry');
+            if (newEntry != null) localStorage.setItem('currentTimeEntry', JSON.stringify(newEntry));
+            eventBus.$emit('tracking-changed', newEntry);
         },
     },
 }
