@@ -5,7 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
@@ -52,10 +51,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       meta: { viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' },
       title: 'Just Track',
+      favicon: 'src/assets/favicon.ico',
     }),
-    new CopyWebpackPlugin([
-      { from: 'src/assets/icon.ico', to: 'favicon.ico' },
-    ]),
     new VueLoaderPlugin(),
     new GenerateSW({
       swDest: 'service-worker.js',
