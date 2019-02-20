@@ -17,16 +17,13 @@
 import db from '../lib/idb.js';
 import { NONE_TASK } from '../lib/constants';
 import { eventBus } from '../lib/event-bus';
+import { changePageTitle } from '../lib/title-favicon.js';
 
 export default {
     data: () => ({
-        tracking: false,
-        currentTask: NONE_TASK,
+        currentTask: null,
         currentTimeEntry: null,
         myCurrentTimestamp: null,
-
-        timeUpdateInterval: null,
-        documentKeyDownHandler: null,
     }),
     props: {
         keyCommand: String,
@@ -45,14 +42,13 @@ export default {
             this.currentTimeEntry = JSON.parse(resumableEntry);
             this.currentTask = await (this.currentTimeEntry.taskId == 0 ? NONE_TASK : db.tasks.where('id').equals(this.currentTimeEntry.taskId).first());
             this.myCurrentTimestamp = Date.now() + 100;
-            this.tracking = true;
         }
     },
     methods: {
         toggleTracking() {
             if (!this.tracking) {
                 this.startTracking(NONE_TASK);
-            } else if (this.tracking && this.currentTimeEntry) {
+            } else {
                 this.endTracking();
             }
         },
@@ -60,7 +56,6 @@ export default {
             this.currentTask = task;
             this.myCurrentTimestamp = Date.now() + 100;
             this.currentTimeEntry = { taskId: this.currentTask.id, start: Date.now() };
-            this.tracking = true;
         },
         endTracking() {
             if (this.currentTimeEntry == null) return;
@@ -69,19 +64,21 @@ export default {
                 // Only store time entries over a minute
                 db.timeEntries.add(this.currentTimeEntry);
             }
-            this.tracking = false;
-            this.currentTask = NONE_TASK;
+            this.currentTask = null;
             this.currentTimeEntry = null;
         },
     },
     computed: {
+        tracking() {
+            return this.currentTimeEntry != null;
+        },
         elapsedTime() {
             return this.myCurrentTimestamp - this.currentTimeEntry.start;
         },
     },
     watch: {
         async keyCommand(key) {
-            let task = await (key == ' ' ? NONE_TASK : db.tasks.where('hotkey').equals(key.toUpperCase()).first());
+            let task = await (key == ' ' ? NONE_TASK : db.tasks.get({ deleted: 0, hotkey: key.toUpperCase() }));
             if (this.tracking && task != null && task.id != this.currentTask.id) {
                 this.endTracking();
                 this.startTracking(task);
@@ -94,6 +91,9 @@ export default {
             if (newEntry == null) localStorage.removeItem('currentTimeEntry');
             if (newEntry != null) localStorage.setItem('currentTimeEntry', JSON.stringify(newEntry));
             eventBus.$emit('tracking-changed', newEntry);
+        },
+        currentTask(newTask) {
+            changePageTitle(newTask == null ? 'Just Track' : 'T : ' + newTask.name);
         },
     },
 }

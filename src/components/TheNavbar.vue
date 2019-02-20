@@ -1,7 +1,7 @@
 <template>
 <nav class="navbar is-primary">
     <div class="navbar-brand">
-        <a class="navbar-item"><strong>My PWA</strong></a>
+        <a class="navbar-item"><strong>Just Track</strong></a>
         <a role="button" class="navbar-burger" v-on:click="displayNavbarMenu = !displayNavbarMenu">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -12,7 +12,7 @@
         <div class="navbar-start">
         </div>
         <div class="navbar-end">
-            <a class="navbar-item" target="_blank" href="https://cemulate.github.io">
+            <a class="navbar-item" target="_blank" href="https://github.com/cemulate/just-track">
                 <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
                 &nbsp; View on Github
             </a>

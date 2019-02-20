@@ -50,7 +50,7 @@ module.exports = {
     new MiniCssExtractPlugin({ filename: 'styles.css' }),
     new HtmlWebpackPlugin({
       meta: { viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' },
-      title: 'App',
+      title: 'Just Track',
     }),
     new CopyWebpackPlugin([
       { from: 'src/assets/icon.ico', to: 'favicon.ico' },
@@ -61,9 +61,9 @@ module.exports = {
       include: [ /\.html$/, /\.js$/, /\.css$/, /favicon.ico$/ ],
     }),
     new WebpackPwaManifest({
-      name: 'My PWA',
-      short_name: 'MyPWA',
-      description: 'My Progressive Web App',
+      name: 'Just Track',
+      short_name: 'JustTrack',
+      description: 'Simple offline-only time tracker',
       background_color: '#ffffff',
       icons: [
         {

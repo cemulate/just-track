@@ -90,7 +90,6 @@ export default {
     methods: {
         async fetchTimeEntries() {
             let [ start, end ] = this.timeWindow;
-            console.log(start, end, new Date(start), new Date(end));
             let timeEntries = await db.timeEntries.where('start').between(start, end).toArray();
             await Promise.all(timeEntries.map(async (entry) => {
                 entry.task = entry.taskId == 0 ? NONE_TASK : await db.tasks.where('id').equals(entry.taskId).first();
