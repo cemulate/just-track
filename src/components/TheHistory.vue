@@ -57,6 +57,17 @@
         </nav>
         <div class="progress-bar" v-bind:style="{ 'background': backgroundGradient(total) }"></div>
         </template>
+        <hr v-if="timeEntries.length > 0">
+        <nav class="level is-mobile" v-if="timeEntries.length > 0">
+            <div class="level-left">
+                <div class="level-item"><span class="is-size-3">Total</span></div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <span class="is-size-3 has-right-margin">{{ grandTotal | timePeriod }}</span>
+                </div>
+            </div>
+        </nav>
     </div>
 </div>
 </div>
@@ -177,6 +188,9 @@ export default {
                 let percent = Math.round(time / totalTime * 100);
                 return { task: entries[0].task, time, percent };
             });
+        },
+        grandTotal() {
+            return sumBy(this.timeEntries, entry => entry.end - entry.start);
         },
     },
     filters: {
