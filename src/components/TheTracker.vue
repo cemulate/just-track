@@ -1,7 +1,8 @@
 <template>
-<div id="main-area" class="box" v-on:click="toggleTracking" v-bind:style="{ 'background': tracking ? currentTask.color : 'inherit' }">
+<div id="main-area" class="box" v-on:click="toggleTracking" v-bind:style="{ 'background': tracking ? currentTask.color : 'white' }">
     <div class="columns is-centered">
-        <div class="column is-narrow">
+        <transition name="tape-roll" mode="out-in">
+        <div class="column is-narrow" v-bind:key="currentTask">
             <span v-bind:class="{ 'soft': !tracking }">
                 {{ tracking ? currentTask.name : 'START' }}
             </span>
@@ -9,6 +10,7 @@
                 {{ elapsedTime | timePeriod }}
             </span>
         </div>
+        </transition>
     </div>
 </div>
 </template>
@@ -100,7 +102,23 @@ export default {
 </script>
 
 <style lang="scss">
+.tape-roll-enter-active {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+}
+.tape-roll-leave-active {
+    transition: transform 0.3s ease-in, opacity 0.3s ease-out;
+}
+.tape-roll-enter {
+    opacity: 0;
+    transform: translateX(100vw);
+}
+.tape-roll-leave-to {
+    opacity: 0;
+    transform: translateX(-100vw);
+}
+
 #main-area {
+    transition: background 0.3s linear;
     margin-top: 20px;
     span {
         font-size: 6vw;
