@@ -1,43 +1,43 @@
 <template>
 <div>
-<template class="" v-for="(task, index) in tasks">
-    <nav class="level">
-        <div class="level-left">
-            <div class="level-item">
-                <a class="button" v-bind:disabled="task.id == trackedTaskId" v-on:click="requestTrack(task)">
-                    <font-awesome-icon v-bind:icon="['far', 'clock']"></font-awesome-icon>
-                </a>
-                &nbsp;&nbsp;
-                <strong>{{ task.name }}</strong>
-            </div>
+<transition-group name="simple-list" tag="div">
+<nav class="level simple-list-item" v-for="(task, index) in tasks" v-bind:key="task.id">
+    <div class="level-left">
+        <div class="level-item">
+            <a class="button" v-bind:disabled="task.id == trackedTaskId" v-on:click="requestTrack(task)">
+                <font-awesome-icon v-bind:icon="['far', 'clock']"></font-awesome-icon>
+            </a>
+            &nbsp;&nbsp;
+            <strong>{{ task.name }}</strong>
         </div>
-        <div class="level-right">
-            <div class="level-item">
-                <color-picker v-bind:color="task.color" v-on:pick-color="setTaskColor(task, $event)"></color-picker>
-            </div>
-            <div class="level-item">
-                <div class="field">
-                    <div class="control has-icons-left">
-                        <div class="select">
-                            <select v-model="task.hotkey" v-on:change="taskHotkeyChanged(task)">
-                                <option v-for="letter in alphabet" v-bind:value="letter">{{ letter }}</option>
-                            </select>
-                        </div>
-                        <div class="icon is-small is-left">
-                            <font-awesome-icon icon="keyboard"></font-awesome-icon>
-                        </div>
+    </div>
+    <div class="level-right">
+        <div class="level-item">
+            <color-picker v-bind:color="task.color" v-on:pick-color="setTaskColor(task, $event)"></color-picker>
+        </div>
+        <div class="level-item">
+            <div class="field">
+                <div class="control has-icons-left">
+                    <div class="select">
+                        <select v-model="task.hotkey" v-on:change="taskHotkeyChanged(task)">
+                            <option v-for="letter in alphabet" v-bind:value="letter">{{ letter }}</option>
+                        </select>
+                    </div>
+                    <div class="icon is-small is-left">
+                        <font-awesome-icon icon="keyboard"></font-awesome-icon>
                     </div>
                 </div>
             </div>
-            <div class="level-item">
-                <a class="button is-outlined" v-on:click="deleteTaskById(task.id)" v-bind:disabled="task.id == trackedTaskId">
-                    <font-awesome-icon icon="trash-alt"></font-awesome-icon>
-                </a>
-            </div>
         </div>
-    </nav>
-    <hr v-if="index < tasks.length - 1">
-</template>
+        <div class="level-item">
+            <a class="button is-outlined" v-on:click="deleteTaskById(task.id)" v-bind:disabled="task.id == trackedTaskId">
+                <font-awesome-icon icon="trash-alt"></font-awesome-icon>
+            </a>
+        </div>
+    </div>
+</nav>
+</transition-group>
+<hr>
 <div class="field has-addons" style="width: 100%"> <!-- Hack? -->
     <div class="control has-icons-left is-expanded">
         <span class="icon is-left"><font-awesome-icon icon="plus"></font-awesome-icon></span>
@@ -103,5 +103,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.simple-list-enter-active, .simple-list-leave-active {
+    transition: opacity 0.25s ease;
+}
+.simple-list-enter, .simple-list-leave-to {
+    opacity: 0;
+}
 </style>
