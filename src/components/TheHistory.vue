@@ -225,8 +225,10 @@ div.time-entry-holder {
         left: 0;
         position: absolute;
         overflow-y: hidden;
+        box-shadow: 0 -3px 15px rgba(0,0,0,0.3);
         &.metric {
             font-style: italic;
+            box-shadow: none;
         }
         &.top-divider {
             border-top: 1px dashed gray;
