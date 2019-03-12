@@ -35,11 +35,9 @@
     </div>
     <div class="column is-6">
         <div class="time-entry-holder" v-bind:style="{ 'height': totalHeight }">
-            <div class="time-entry" v-for="entry in timeEntries" v-bind:style="{ 'height': entryHeight(entry), 'top': offsetToEntry(entry), 'background': entry.task.color }">
-                &nbsp; <em>{{ entry.task.name }}</em>
-            </div>
-            <div class="time-entry metric" v-for="(hour, index) in metricHours" v-bind:style="{ 'top': `${ 100 * index }px`}" v-bind:class="{ 'bottom-divider': index < metricHours.length - 1, 'top-divider': index == 0 }">
-                <span class="is-pulled-right" style="margin-right: 10px">{{ hour | displayHour }}</span>
+            <div class="time-entry" v-for="entry in timeEntries" v-bind:style="{ 'height': entryHeight(entry), 'top': offsetToEntry(entry), 'background': entry.task.color }"></div>
+            <div class="time-entry metric" v-for="(hour, index) in metricHours" v-bind:style="metricDimensionsAtIndex(index)" v-bind:class="{ 'bottom-divider': index < metricHours.length - 1, 'top-divider': index == 0 }">
+                <span style="margin-left: 10px">{{ hour | displayHour }}</span>
             </div>
         </div>
     </div>
@@ -78,6 +76,7 @@ export default {
         baseTime: startOfHour(Date.now()),
         startHour: 8,
         endHour: 28,
+        pixelsPerMinute: 150 / 60,
     }),
     mounted() {
         eventBus.$on('tracking-changed', () => this.fetchTimeEntries());
@@ -105,14 +104,18 @@ export default {
         },
         entryHeight(entry) {
             let minutes = (entry.end - entry.start) / 1000 / 60;
-            let pixels = 100 / 60 * minutes;
+            let pixels = this.pixelsPerMinute * minutes;
             return `${ pixels }px`;
         },
         offsetToEntry(entry) {
             let start = this.earliestTime;
             let minutes = (entry.start - start) / 1000 / 60;
-            let pixels = 100 / 60 * minutes;
+            let pixels = this.pixelsPerMinute * minutes;
             return `${ pixels }px`;
+        },
+        metricDimensionsAtIndex(index) {
+            let height = this.pixelsPerMinute * 60;
+            return { top: `${ height * index }px`, height: `${ height }px` };
         },
         backgroundGradient(total) {
             let color = total.task.id == 0 ? 'black' : total.task.color;
@@ -163,7 +166,7 @@ export default {
             if (start == null || end == null) return '0px';
             let diff = end - start;
             let minutes = diff / 1000 / 60;
-            let pixels = 100 / 60 * minutes + 10;
+            let pixels = this.pixelsPerMinute * minutes + 10;
             return `${ pixels }px`;
         },
         totals() {
@@ -209,7 +212,6 @@ div.time-entry-holder {
         position: absolute;
         overflow-y: hidden;
         &.metric {
-            height: 100px;
             font-style: italic;
         }
         &.top-divider {
