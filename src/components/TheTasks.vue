@@ -1,7 +1,7 @@
 <template>
 <div>
 <transition-group name="simple-list" tag="div">
-<div class="columns is-multiline is-vcentered" v-for="(task, index) in tasks" v-bind:key="task.id">
+<div class="columns is-multiline is-vcentered" v-for="task in tasks" v-bind:key="task.id">
     <div class="column is-narrow-widescreen is-full-desktop has-text-vcentered">
         <a class="button" v-bind:disabled="task.id == trackedTaskId" v-on:click="requestTrack(task)">
             <font-awesome-icon v-bind:icon="['far', 'clock']"></font-awesome-icon>
@@ -18,7 +18,7 @@
             <div class="control has-icons-left is-expanded">
                 <div class="select is-fullwidth">
                     <select v-model="task.hotkey" v-on:change="taskChanged(task)">
-                        <option v-for="letter in alphabet" v-bind:value="letter">{{ letter }}</option>
+                        <option v-for="letter in alphabet" v-bind:value="letter" v-bind:key="letter">{{ letter }}</option>
                     </select>
                 </div>
                 <div class="icon is-small is-left">

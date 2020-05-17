@@ -5,7 +5,7 @@
         <div class="control is-expanded">
             <div class="select is-fullwidth">
                 <select v-model="startHour" v-on:change="fetchTimeEntries">
-                    <option v-for="choice in startHourChoices" v-bind:value="choice">{{ choice | displayHourOrdinal }}</option>
+                    <option v-for="choice in startHourChoices" v-bind:value="choice" v-bind:key="choice">{{ choice | displayHourOrdinal }}</option>
                 </select>
             </div>
         </div>
@@ -21,7 +21,7 @@
         <div class="control is-expanded">
             <div class="select is-fullwidth">
                 <select v-model="endHour" v-on:change="fetchTimeEntries">
-                    <option v-for="choice in endHourChoices" v-bind:value="choice">{{ choice | displayHourOrdinal }}</option>
+                    <option v-for="choice in endHourChoices" v-bind:value="choice" v-bind:key="choice">{{ choice | displayHourOrdinal }}</option>
                 </select>
             </div>
         </div>
@@ -33,23 +33,23 @@
     </div>
     <div class="column is-6-widescreen is-full">
         <div class="time-entry-holder" v-bind:style="{ 'height': totalHeight }">
-            <div class="time-entry" v-for="entry in timeEntries" v-bind:style="{ 'height': entryHeight(entry), 'top': offsetToEntry(entry), 'background': entry.task.color }"></div>
-            <div class="time-entry metric" v-for="(hour, index) in metricHours" v-bind:style="metricDimensionsAtIndex(index)" v-bind:class="{ 'bottom-divider': index < metricHours.length - 1, 'top-divider': index == 0 }">
+            <div class="time-entry" v-for="entry in timeEntries" v-bind:key="entry.id" v-bind:style="{ 'height': entryHeight(entry), 'top': offsetToEntry(entry), 'background': entry.task.color }"></div>
+            <div class="time-entry metric" v-for="(hour, index) in metricHours" v-bind:key="index" v-bind:style="metricDimensionsAtIndex(index)" v-bind:class="{ 'bottom-divider': index < metricHours.length - 1, 'top-divider': index == 0 }">
                 <span style="margin-left: 10px">{{ hour | displayHour }}</span>
             </div>
         </div>
     </div>
     <div class="column is-6-widescreen is-full">
         <template v-for="total in totals">
-        <div class="columns is-mobile" style="margin-bottom: 0">
-            <div class="column is-8">
-                <span class="is-size-3">{{ total.task.name }}</span>
+            <div class="columns is-mobile" style="margin-bottom: 0" v-bind:key="`text-${ total.task.id }`">
+                <div class="column is-8">
+                    <span class="is-size-3">{{ total.task.name }}</span>
+                </div>
+                <div class="column is-4">
+                    <span class="is-size-3 has-right-margin">{{ total.time | timePeriod }}</span>
+                </div>
             </div>
-            <div class="column is-4">
-                <span class="is-size-3 has-right-margin">{{ total.time | timePeriod }}</span>
-            </div>
-        </div>
-        <div class="progress-bar" v-bind:style="{ 'background': backgroundGradient(total) }"></div>
+            <div class="progress-bar" v-bind:style="{ 'background': backgroundGradient(total) }" v-bind:key="`bar-${ total.task.id }`"></div>
         </template>
         <hr v-if="timeEntries.length > 0">
         <div class="columns is-mobile" v-if="timeEntries.length > 0">
