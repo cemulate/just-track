@@ -2,28 +2,13 @@
 <body v-on:keydown="keyDown">
 <the-navbar></the-navbar>
 <div class="container is-fluid">
+    <the-instructions></the-instructions>
     <the-tracker v-bind:current-timestamp="currentTimestamp" v-bind:key-command="trackerKeyCommand"></the-tracker>
     <div class="columns is-desktop">
-        <!-- <div class="column is-2">
-            <aside class="menu">
-                <ul class="menu-list">
-                    <li><a v-bind:class="{ 'is-active': mode == 'tasks' }" v-on:click="mode = 'tasks'">
-                        <font-awesome-icon icon="tasks"></font-awesome-icon>&nbsp; Tasks
-                    </a></li>
-                    <li><a v-bind:class="{ 'is-active': mode == 'history' }" v-on:click="mode = 'history'">
-                        <font-awesome-icon icon="history"></font-awesome-icon>&nbsp; History
-                    </a></li>
-                </ul>
-            </aside>
-        </div>
-        <div class="column is-10">
-            <the-tasks v-if="mode == 'tasks'"></the-tasks>
-            <the-history v-if="mode == 'history'"></the-history>
-        </div> -->
-        <div class="column is-6-widescreen is-7-desktop is-12-tablet">
+        <div class="column is-5-widescreen is-5-desktop is-12-tablet">
             <the-tasks></the-tasks>
         </div>
-        <div class="column is-6-widescreen is-5-desktop is-12-tablet">
+        <div class="column is-7-widescreen is-7-desktop is-12-tablet">
             <the-history></the-history>
         </div>
     </div>
@@ -38,6 +23,7 @@ import TheNavbar from './TheNavbar.vue';
 import TheTasks from './TheTasks.vue';
 import TheTracker from './TheTracker.vue';
 import TheHistory from './TheHistory.vue';
+import TheInstructions from './TheInstructions.vue';
 
 export default {
     data: () => ({
@@ -67,6 +53,7 @@ export default {
         'the-tasks': TheTasks,
         'the-tracker': TheTracker,
         'the-history': TheHistory,
+        'the-instructions': TheInstructions,
     },
 };
 </script>

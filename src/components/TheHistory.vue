@@ -1,39 +1,37 @@
 <template>
 <div>
-<nav class="level">
-    <div class="level-left">
-        <div class="level-item">
-            <div class="select">
+<div class="columns is-mobile is-multiline is-centered is-vcentered">
+    <div class="column is-narrow-tablet is-full-mobile">
+        <div class="control is-expanded">
+            <div class="select is-fullwidth">
                 <select v-model="startHour" v-on:change="fetchTimeEntries">
                     <option v-for="choice in startHourChoices" v-bind:value="choice">{{ choice | displayHourOrdinal }}</option>
                 </select>
             </div>
         </div>
     </div>
-    <div class="level-item">
+    <div class="column is-hidden-mobile"></div>
+    <div class="column is-narrow has-text-vcentered">
         <a class="button" v-on:click="moveBaseTimeBack"><font-awesome-icon icon="arrow-left"></font-awesome-icon></a>
-        &nbsp;
-        &nbsp;
-        <strong class="day-display">{{ baseTime | displayDay }}</strong>
-        &nbsp;
-        &nbsp;
+        <strong class="day-display">&nbsp; {{ baseTime | displayDay }} &nbsp;</strong>
         <a class="button" v-on:click="moveBaseTimeForward"><font-awesome-icon icon="arrow-right"></font-awesome-icon></a>
     </div>
-    <div class="level-right">
-        <div class="level-item">
-            <div class="select">
+    <div class="column is-hidden-mobile"></div>
+    <div class="column is-narrow-tablet is-full-mobile">
+        <div class="control is-expanded">
+            <div class="select is-fullwidth">
                 <select v-model="endHour" v-on:change="fetchTimeEntries">
                     <option v-for="choice in endHourChoices" v-bind:value="choice">{{ choice | displayHourOrdinal }}</option>
                 </select>
             </div>
         </div>
     </div>
-</nav>
+</div>
 <div class="columns is-multiline">
     <div class="column is-12 has-text-centered" v-if="timeEntries.length == 0">
         <em class="is-size-4 has-text-grey-light">NO HISTORY IN THIS TIME PERIOD</em>
     </div>
-    <div class="column is-6">
+    <div class="column is-6-widescreen is-full">
         <div class="time-entry-holder" v-bind:style="{ 'height': totalHeight }">
             <div class="time-entry" v-for="entry in timeEntries" v-bind:style="{ 'height': entryHeight(entry), 'top': offsetToEntry(entry), 'background': entry.task.color }"></div>
             <div class="time-entry metric" v-for="(hour, index) in metricHours" v-bind:style="metricDimensionsAtIndex(index)" v-bind:class="{ 'bottom-divider': index < metricHours.length - 1, 'top-divider': index == 0 }">
@@ -41,33 +39,27 @@
             </div>
         </div>
     </div>
-    <div class="column is-6">
+    <div class="column is-6-widescreen is-full">
         <template v-for="total in totals">
-        <nav class="level is-mobile" style="margin-bottom: 0">
-            <div class="level-left">
-                <div class="level-item">
-                    <span class="is-size-3">{{ total.task.name }}</span>
-                </div>
+        <div class="columns is-mobile" style="margin-bottom: 0">
+            <div class="column is-8">
+                <span class="is-size-3">{{ total.task.name }}</span>
             </div>
-            <div class="level-right">
-                <div class="level-item">
-                    <span class="is-size-3 has-right-margin">{{ total.time | timePeriod }}</span>
-                </div>
+            <div class="column is-4">
+                <span class="is-size-3 has-right-margin">{{ total.time | timePeriod }}</span>
             </div>
-        </nav>
+        </div>
         <div class="progress-bar" v-bind:style="{ 'background': backgroundGradient(total) }"></div>
         </template>
         <hr v-if="timeEntries.length > 0">
-        <nav class="level is-mobile" v-if="timeEntries.length > 0">
-            <div class="level-left">
-                <div class="level-item"><span class="is-size-3">Total</span></div>
+        <div class="columns is-mobile" v-if="timeEntries.length > 0">
+            <div class="column is-8">
+                <span class="is-size-3">Total</span>
             </div>
-            <div class="level-right">
-                <div class="level-item">
-                    <span class="is-size-3 has-right-margin">{{ grandTotal | timePeriod }}</span>
-                </div>
+            <div class="column is-4">
+                <span class="is-size-3 has-right-margin">{{ grandTotal | timePeriod }}</span>
             </div>
-        </nav>
+        </div>
     </div>
 </div>
 </div>
@@ -96,6 +88,7 @@ export default {
                 if (entry.task.id == task.id) entry.task = task;
             });
         });
+        this.fetchTimeEntries();
     },
     methods: {
         async fetchTimeEntries() {
@@ -211,7 +204,7 @@ export default {
             return isYesterday(time) ? 'Yesterday' :
                 isToday(time) ? 'Today' :
                 isTomorrow(time) ? 'Tomorrow' :
-                format(time, 'MM/DD');
+                format(time, 'MM/dd');
         },
     },
 }

@@ -3,3 +3,19 @@
 $primary: #0070ba;
 
 @import 'bulma/bulma.sass';
+
+// Fix bulma's super-skinny color inputs
+input[type="color"].input {
+    min-width: 45px;
+}
+
+.has-text-vcentered > * {
+    vertical-align: middle;
+}
+
+// Fix Bulma is-narrow-* not interacting correctly with other breakpoint size classes
+div.column.is-narrow-widescreen.is-full-desktop {
+    @include from($widescreen) {
+        width: unset;
+    }
+}

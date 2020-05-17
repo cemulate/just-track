@@ -1,41 +1,38 @@
 <template>
 <div>
 <transition-group name="simple-list" tag="div">
-<nav class="level simple-list-item" v-for="(task, index) in tasks" v-bind:key="task.id">
-    <div class="level-left">
-        <div class="level-item">
-            <a class="button" v-bind:disabled="task.id == trackedTaskId" v-on:click="requestTrack(task)">
-                <font-awesome-icon v-bind:icon="['far', 'clock']"></font-awesome-icon>
-            </a>
-            &nbsp;&nbsp;
-            <strong>{{ task.name }}</strong>
-        </div>
+<div class="columns is-multiline is-vcentered" v-for="(task, index) in tasks" v-bind:key="task.id">
+    <div class="column is-narrow-widescreen is-full-desktop has-text-vcentered">
+        <a class="button" v-bind:disabled="task.id == trackedTaskId" v-on:click="requestTrack(task)">
+            <font-awesome-icon v-bind:icon="['far', 'clock']"></font-awesome-icon>
+        </a>
+        &nbsp;
+        <strong>{{ task.name }}</strong>
     </div>
-    <div class="level-right">
-        <div class="level-item">
-            <color-picker v-bind:color="task.color" v-on:pick-color="setTaskColor(task, $event)"></color-picker>
-        </div>
-        <div class="level-item">
-            <div class="field">
-                <div class="control has-icons-left">
-                    <div class="select">
-                        <select v-model="task.hotkey" v-on:change="taskHotkeyChanged(task)">
-                            <option v-for="letter in alphabet" v-bind:value="letter">{{ letter }}</option>
-                        </select>
-                    </div>
-                    <div class="icon is-small is-left">
-                        <font-awesome-icon icon="keyboard"></font-awesome-icon>
-                    </div>
+    <div class="column is-hidden-touch is-hidden-desktop-only"></div>
+    <div class="column is-narrow-widescreen is-full-desktop">
+        <div class="field has-addons">
+            <div class="control">
+                <input type="color" class="input" v-model="task.color" v-on:change="taskChanged(task)">
+            </div>
+            <div class="control has-icons-left is-expanded">
+                <div class="select is-fullwidth">
+                    <select v-model="task.hotkey" v-on:change="taskChanged(task)">
+                        <option v-for="letter in alphabet" v-bind:value="letter">{{ letter }}</option>
+                    </select>
+                </div>
+                <div class="icon is-small is-left">
+                    <font-awesome-icon icon="keyboard"></font-awesome-icon>
                 </div>
             </div>
-        </div>
-        <div class="level-item">
-            <a class="button is-outlined" v-on:click="deleteTaskById(task.id)" v-bind:disabled="task.id == trackedTaskId">
-                <font-awesome-icon icon="trash-alt"></font-awesome-icon>
-            </a>
+            <div class="control">
+                <button class="button is-outlined" v-on:click="deleteTaskById(task.id)" v-bind:disabled="task.id == trackedTaskId">
+                    <font-awesome-icon icon="trash-alt"></font-awesome-icon>
+                </button>
+            </div>
         </div>
     </div>
-</nav>
+</div>
 </transition-group>
 <hr>
 <div class="field has-addons" style="width: 100%"> <!-- Hack? -->
@@ -52,7 +49,6 @@
 
 <script>
 import db from '../lib/idb.js';
-import ColorPicker from './ColorPicker.vue';
 import { eventBus } from '../lib/event-bus';
 
 export default {
@@ -84,21 +80,13 @@ export default {
             await db.tasks.update(id, { deleted: true });
             this.fetchTasks();
         },
-        async setTaskColor(task, color) {
-            task.color = color;
-            await db.tasks.update(task.id, task);
-            eventBus.$emit('task-updated', task);
-        },
-        async taskHotkeyChanged(task) {
+        async taskChanged(task) {
             await db.tasks.update(task.id, task);
             eventBus.$emit('task-updated', task);
         },
         requestTrack(task) {
             eventBus.$emit('tracking-request', task);
         },
-    },
-    components: {
-        'color-picker': ColorPicker,
     },
 }
 </script>
