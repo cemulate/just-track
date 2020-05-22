@@ -67,7 +67,7 @@
 
 <script>
 import db from '../lib/idb.js';
-import { startOfDay, startOfHour, endOfHour, addHours, subHours, getHours, getTime, isToday, isYesterday, isTomorrow, format } from 'date-fns';
+import { startOfDay, startOfToday, startOfHour, endOfHour, addHours, add, subHours, getHours, getTime, isToday, isYesterday, isTomorrow, format } from 'date-fns';
 import { groupBy, minBy, maxBy, sumBy } from 'lodash-es';
 import { NONE_TASK } from '../lib/constants';
 import { eventBus } from '../lib/event-bus';
@@ -80,6 +80,9 @@ export default {
         startHour: 8,
         endHour: 28,
         pixelsPerMinute: 150 / 60,
+
+        // Enable for development to show demo data in the history view
+        showDemoData: false,
     }),
     mounted() {
         eventBus.$on('tracking-changed', () => this.fetchTimeEntries());
@@ -88,7 +91,7 @@ export default {
                 if (entry.task.id == task.id) entry.task = task;
             });
         });
-        this.fetchTimeEntries();
+        this.showDemoData ? this.makeDemoTimeEntries() : this.fetchTimeEntries();
     },
     methods: {
         async fetchTimeEntries() {
@@ -98,13 +101,25 @@ export default {
                 entry.task = entry.taskId == 0 ? NONE_TASK : await db.tasks.where('id').equals(entry.taskId).first();
             }));
             this.timeEntries = timeEntries;
-            // let task = (await db.tasks.toArray()).pop();
-            // this.timeEntries = [
-            //     { taskId: 0, start: start + 1000*60*60*8 + 1000*60*30, end: start + 1000*60*60*11 + 1000*60*0, task: NONE_TASK },
-            //     { taskId: task.id, start: start + 1000*60*60*11 + 1000*60*0, end: start + 1000*60*60*14 + 1000*60*15, task },
-            //     { taskId: 0, start: start + 1000*60*60*14 + 1000*60*15, end: start + 1000*60*60*15 + 1000*60*0, task: NONE_TASK },
-            //     { taskId: task.id, start: start + 1000*60*60*15 + 1000*60*0, end: start + 1000*60*60*16 + 1000*60*0, task },
-            // ];
+        },
+        makeDemoTimeEntries() {
+            let midnight = startOfToday();
+            let mkTime = (hours, minutes) => add(midnight, { hours, minutes });
+            let fakeEntry = (start, end, task) => ({ taskId: task.id, start, end, task });
+            let fakeTasks = {
+                task1: { id: 1, name: 'Test1', color: '#276fbf' },
+                task2: { id: 2, name: 'Test2', color: '#f03a47' },
+                task3: { id: 3, name: 'Test3', color: '#f6f4f3' },
+            }
+            this.timeEntries = [
+                fakeEntry(mkTime(8, 20), mkTime(8, 40), NONE_TASK),
+                fakeEntry(mkTime(8, 40), mkTime(9, 15), fakeTasks.task1),
+                fakeEntry(mkTime(9, 15), mkTime(9, 25), NONE_TASK),
+                fakeEntry(mkTime(9, 25), mkTime(10, 5), fakeTasks.task2),
+                fakeEntry(mkTime(10, 5), mkTime(10, 30), fakeTasks.task1),
+                fakeEntry(mkTime(10, 30), mkTime(11, 10), fakeTasks.task3),
+                fakeEntry(mkTime(11, 10), mkTime(12, 10), NONE_TASK),
+            ];
         },
         entryHeight(entry) {
             let minutes = (entry.end - entry.start) / 1000 / 60;
