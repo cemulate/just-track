@@ -35,7 +35,7 @@
         <div class="time-entry-holder" v-bind:style="{ 'height': totalHeight }">
             <div class="time-entry" v-for="entry in timeEntries" v-bind:key="entry.id" v-bind:style="{ 'height': entryHeight(entry), 'top': offsetToEntry(entry), 'background': entry.task.color }"></div>
             <div class="time-entry metric" v-for="(hour, index) in metricHours" v-bind:key="index" v-bind:style="metricDimensionsAtIndex(index)" v-bind:class="{ 'bottom-divider': index < metricHours.length - 1, 'top-divider': index == 0 }">
-                <span style="margin-left: 10px">{{ hour | displayHour }}</span>
+                <span class="time-entry-label">{{ hour | displayHour }}</span>
             </div>
         </div>
     </div>
@@ -217,10 +217,9 @@ div.time-entry-holder {
         width: 100%;
         left: 0;
         position: absolute;
-        overflow-y: hidden;
+        // overflow-y: hidden;
         box-shadow: 0 -3px 15px rgba(0,0,0,0.3);
         &.metric {
-            font-style: italic;
             box-shadow: none;
         }
         &.top-divider {
@@ -240,5 +239,17 @@ div.progress-bar {
 .day-display {
     min-width: 80px;
     text-align: center;
+}
+span.time-entry-label {
+    left: 0;
+    top: 0;
+    padding: 5px 7px 5px 5px;
+    background: lightgray;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
+    border-top: 2px solid gray;
+    border-bottom-right-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 </style>
